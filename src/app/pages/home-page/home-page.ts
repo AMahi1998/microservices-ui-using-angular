@@ -6,7 +6,7 @@ import {AsyncPipe, JsonPipe} from "@angular/common";
 import {Router} from "@angular/router";
 import {Order} from "../../model/order";
 import {FormsModule} from "@angular/forms";
-import {OrderService} from "../../services/order/order.service";
+import {OrderService} from "../../services/order/order.services";
 
 @Component({
   selector: 'app-homepage',
