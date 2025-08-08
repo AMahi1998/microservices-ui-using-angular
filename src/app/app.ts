@@ -1,12 +1,25 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, inject, OnInit} from '@angular/core';
+import {OidcSecurityService} from "angular-auth-oidc-client";
+import {RouterModule} from "@angular/router";
+import {HeaderComponent} from "./shared/header/header";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterModule, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('microservices-ui');
+export class AppComponent implements OnInit {
+  title = 'microservices-shop-frontend';
+
+  private readonly oidcSecurityService = inject(OidcSecurityService);
+
+  ngOnInit(): void {
+    this.oidcSecurityService
+      .checkAuth()
+      .subscribe(({isAuthenticated}) => {
+        console.log('app authenticated', isAuthenticated);
+      })
+  }
 }
