@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {Order} from "../../model/order";
 import {FormsModule} from "@angular/forms";
 import {OrderService} from "../../services/order/order.services";
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-homepage',
@@ -38,6 +39,7 @@ export class HomePageComponent implements OnInit {
           .pipe()
           .subscribe(product => {
             this.products = product;
+            console.log('loaded_products',this.products);
           })
       }
     )
@@ -49,31 +51,36 @@ export class HomePageComponent implements OnInit {
 
   orderProduct(product: Product, quantity: string) {
 
-    this.oidcSecurityService.userData$.subscribe(result => {
+    this.oidcSecurityService.userData$.pipe(take(1)).subscribe(result => {
+      console.log('userData',result.userData);
+      const u = result?.userData ?? {};
       const userDetails = {
-        email: result.userData.email,
-        firstName: result.userData.firstName,
-        lastName: result.userData.lastName
+        email: u.email ?? '',
+        //keycloak standard claims
+        firstName: u.given_name ?? u.firstName ?? '',
+        lastName: u.family_name ?? u.lastName ?? ''
       };
 
       if(!quantity) {
         this.orderFailed = true;
         this.orderSuccess = false;
         this.quantityIsNull = true;
-      } else {
-        const order: Order = {
+        return;
+      }
+
+      const order: Order = {
           skuCode: product.skuCode,
           price: product.price,
           quantity: Number(quantity),
           userDetails: userDetails
-        }
-
+      };
+        console.log('Order payload:', order); // Add this line
         this.orderService.orderProduct(order).subscribe(() => {
           this.orderSuccess = true;
         }, error => {
-          this.orderFailed = false;
+          this.orderFailed = true;
         })
       }
-    })
+    )
   }
 }

@@ -11,7 +11,7 @@ import {HeaderComponent} from "./shared/header/header";
   styleUrl: './app.css'
 })
 export class AppComponent implements OnInit {
-  title = 'microservices-shop-frontend';
+  title = 'microservices-ui';
 
   private readonly oidcSecurityService = inject(OidcSecurityService);
 
